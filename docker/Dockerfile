@@ -1,3 +1,5 @@
+# This dockerfile is exactly copied from
+# https://github.com/HuajianUP/Photo-SLAM/issues/2#issuecomment-2089933703
 FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
