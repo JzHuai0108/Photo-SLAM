@@ -1,2 +1,3 @@
 #!/bin/bash
-docker build -t photoslam:v0 -f ./Dockerfile .
+# build docker image
+docker build -t photoslam:latest -f ./Dockerfile .

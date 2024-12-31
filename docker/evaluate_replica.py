@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate PhotoSLAM on the Replica dataset.")
     parser.add_argument("--dataset_dir", type=str, default='/root/datasets/Replica', help="Path to the Replica dataset folder")
     parser.add_argument("--result_dir", type=str, default='/root/results/Replica', help="Path to the Replica result folder")
+    parser.add_argument("--photoslam_dir", type=str, default="~/Photo-SLAM", help="root path of the Photo-SLAM codebase")
     args = parser.parse_args()
 
     found_seqs = []
@@ -29,14 +30,13 @@ def main():
         log_file = os.path.join(resultdir, f"{seqname}_log.txt")
         os.makedirs(resultdir, exist_ok=True)  # Ensure result directory exists
 
-        cmd = f"/Photo-SLAM/bin/replica_rgbd " \
+        cmd = f"{args.photoslam_dir}/bin/replica_rgbd " \
               f"./ORB-SLAM3/Vocabulary/ORBvoc.txt " \
               f"./cfg/ORB_SLAM3/RGB-D/Replica/{seqname}.yaml " \
               f"./cfg/gaussian_mapper/RGB-D/Replica/replica_rgbd.yaml " \
               f"{seqdir} " \
               f"{resultdir} no_viewer"
 
-        cmd_with_log = f"{cmd} > {log_file} 2>&1"
         print(f"Running command for sequence {seqname}... Log: {log_file}")
         with open(log_file, "w") as log:
             process = subprocess.Popen(

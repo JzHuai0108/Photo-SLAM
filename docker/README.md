@@ -8,7 +8,7 @@ cp docker/evaluate_replica.py /media/$USER/ExtremeSSD/results
 
 ## 2. start docker with docker/run.sh, e.g.,
 ```
-./run.sh /media/$USER/ExtremeSSD/datasets /media/$USER/ExtremeSSD/results
+./run.sh $HOME/Documents/gauss_splat/Photo-SLAM /media/$USER/ExtremeSSD/datasets /media/$USER/ExtremeSSD/results
 ```
 
 ## 3. run in docker 

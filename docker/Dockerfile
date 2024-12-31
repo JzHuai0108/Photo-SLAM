@@ -80,8 +80,8 @@ RUN cd / && \
 
 ENV Torch_DIR /libtorch/share/cmake/Torch
 
-# repo
-RUN git clone https://github.com/HuajianUP/Photo-SLAM.git /Photo-SLAM
+ARG UID
+RUN adduser --uid $UID --disabled-password --gecos "" pi
+USER pi
 
-WORKDIR /Photo-SLAM
-
+WORKDIR /home/pi

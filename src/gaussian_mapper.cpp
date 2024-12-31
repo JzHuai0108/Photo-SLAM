@@ -527,15 +527,26 @@ void GaussianMapper::run()
     // Third loop: Tail gaussian optimization
     int densify_interval = densifyInterval();
     int n_delay_iters = densify_interval * 0.8;
-    while (getIteration() - SLAM_stop_iter <= n_delay_iters || getIteration() % densify_interval <= n_delay_iters || isKeepingTraining()) {
+    int num_iter = getIteration();
+    while (num_iter - SLAM_stop_iter <= n_delay_iters || num_iter % densify_interval <= n_delay_iters || isKeepingTraining()) {
         trainForOneIteration();
         densify_interval = densifyInterval();
         n_delay_iters = densify_interval * 0.8;
+        if (getIteration() == num_iter) {
+            std::cout << "No useful training is performed. Break the final training phase." << std::endl;
+            break;
+        }
+        num_iter = getIteration();
     }
 
     // Save and clear
     renderAndRecordAllKeyframes("_shutdown");
-    savePly(result_dir_ / (std::to_string(getIteration()) + "_shutdown") / "ply");
+    std::size_t nkfs = scene_->keyframes().size();
+    if (nkfs > 0) {
+        savePly(result_dir_ / (std::to_string(getIteration()) + "_shutdown") / "ply");
+    } else {
+        std::cout << "#Keyframes for GS training is " << nkfs << ", so we skip saving ply." << std::endl;
+    }
     writeKeyframeUsedTimes(result_dir_ / "used_times", "final");
 
     signalStop();

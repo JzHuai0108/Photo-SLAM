@@ -205,6 +205,18 @@ target_link_libraries(replica_rgbd
     gaussian_mapper
     ${ORB_SLAM3_SOURCE_DIR}/lib/libORB_SLAM3.so)
 
+add_executable(rrxio_mono examples/rrxio_mono.cpp)
+target_link_libraries(rrxio_mono
+    gaussian_viewer    
+    gaussian_mapper
+    ${ORB_SLAM3_SOURCE_DIR}/lib/libORB_SLAM3.so)
+
+add_executable(vivid_mono examples/vivid_mono.cpp)
+target_link_libraries(vivid_mono
+    gaussian_viewer
+    gaussian_mapper
+    ${ORB_SLAM3_SOURCE_DIR}/lib/libORB_SLAM3.so)
+
 # TUM Monocular
 add_executable(tum_mono examples/tum_mono.cpp)
 target_link_libraries(tum_mono
