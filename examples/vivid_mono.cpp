@@ -203,6 +203,27 @@ int main(int argc, char **argv)
     return 0;
 }
 
+double local_time_to_unix_time(const std::string& timestr, int zoneid) {
+    // Parse timestamp (assuming ISO 8601 format with fractional seconds)
+    // each timestr look like:
+    // 2019-04-25 16:17:58.620292
+    // zoneid is positive to east zones e.g., China zoneid = 8, Seoul Korea zoneid=9.
+    struct std::tm tm {};
+    double fractionalSec = 0.0;
+
+    std::istringstream ss(timestr);
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S"); // Parse date and time
+    if (ss.peek() == '.') {
+        ss.ignore(); // Skip the '.'
+        ss >> fractionalSec;
+        fractionalSec /= 1e6; // Convert microseconds to seconds
+    }
+    // create a UNIX timestamp at Greenwich London
+    double timestamp = static_cast<double>(std::mktime(&tm)) + fractionalSec - zoneid * 3600;
+
+    return timestamp;
+}
+
 /**
  * seqPath: path to the sequence
  * modality: e.g., Thermal_vis, Thermal_fs, Thermal_naive, Thermal_shin, RGB
@@ -249,23 +270,10 @@ void LoadImages(const std::string &seqPath, const std::string &modality,
     }
     vTimestamps.reserve(vstrImageFilenames.size());
     std::string line;
+    int zoneid = 9; // Seoul Korea
     while (std::getline(timeFile, line)) {
         if (!line.empty()) {
-            // Parse timestamp (assuming ISO 8601 format with fractional seconds)
-            // each line of timeTxt look like:
-            // 2019-04-25 16:17:58.620292
-            struct std::tm tm {};
-            double fractionalSec = 0.0;
-
-            std::istringstream ss(line);
-            ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S"); // Parse date and time
-            if (ss.peek() == '.') {
-                ss.ignore(); // Skip the '.'
-                ss >> fractionalSec;
-                fractionalSec /= 1e6; // Convert microseconds to seconds
-            }
-            // create a UNIX timestamp
-            double timestamp = static_cast<double>(std::mktime(&tm)) + fractionalSec;
+            double timestamp = local_time_to_unix_time(line, zoneid);
             vTimestamps.push_back(timestamp);
         }
     }
